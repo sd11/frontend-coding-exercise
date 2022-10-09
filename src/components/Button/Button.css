@@ -7,3 +7,11 @@
   height: 1.5rem;
   width: 1.5rem;
 }
+
+.Button:hover {
+  filter:brightness(0.9);
+}
+
+.Button.disabled {
+  filter:grayscale(1);
+}
