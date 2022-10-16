@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { debounce } from "lodash";
 import { ResultsList } from "./components/ResultsList/ResultsList";
 import { Input } from "./components/Input/Input";
 import { Button } from "./components/Button/Button";
 import { Alert } from "./components/Alert/Alert";
-import "./App.css";
 
 const API_URL = "http://localhost:8010/proxy/suburbs.json?q=";
 
@@ -22,7 +22,7 @@ const fetchSuburbs = async (queryParam, setSuburbs, setSelection) => {
     setSuburbs([]);
     return;
   }
-  
+
   const response = await fetch(`${API_URL}${queryParam}`);
   let results = await response.json();
 
@@ -30,7 +30,7 @@ const fetchSuburbs = async (queryParam, setSuburbs, setSelection) => {
     const name = item.name.toLowerCase();
     return name.startsWith(queryParam.toLowerCase());
   });
-  
+
   setSuburbs(results);
   setSelection('');
 };
@@ -59,7 +59,7 @@ export default function App() {
 
   function onSelect(value) {
     if (!value) {
-      return; 
+      return;
     }
     const displayName = `${value.name}, ${value.state.abbreviation}`
     setSearchText(displayName);
@@ -73,17 +73,47 @@ export default function App() {
 
   return (
     <>
-      <div className="container">
-        <span className="suburb">Suburb</span>
-        <div className="autoComplete">
-          <div className="searchBox">
+      <Container>
+        <Suburb>Suburb</Suburb>
+        <AutoComplete>
+          <SearchBox>
             <Input value={searchText} placeholder='Search suburbs' onChange={onChange} />
             <Button onClick={handleClick} aria-label="Search Suburbs" />
-          </div>
+          </SearchBox>
           { suburbs && suburbs.length > 0 && <ResultsList items={suburbs} onSelect={onSelect} /> }
-        </div>
-      </div>
+        </AutoComplete>
+      </Container>
       { message && <Alert message={message} handleClick={handleAlert} /> }
     </>
   );
 }
+
+const Container = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+`;
+
+const Suburb = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 16px;
+`;
+
+const AutoComplete = styled.div`
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+
+  @media (min-width: 600px) {
+    .autoComplete {
+        width: 600px;
+    }
+  }
+`;
+
+const SearchBox = styled.div`
+  width: 100%;
+  display: inline-flex;
+`;
